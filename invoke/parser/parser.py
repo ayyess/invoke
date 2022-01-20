@@ -261,7 +261,7 @@ class ParseMachine(StateMachine):
         # Positional args (must come above context-name check in case we still
         # need a posarg and the user legitimately wants to give it a value that
         # just happens to be a valid context name.)
-        elif self.context and self.context.missing_positional_args:
+        elif self.context and self.context.ready_positional_args:
             msg = "Context {!r} requires positional args, eating {!r}"
             debug(msg.format(self.context, token))
             self.see_positional_arg(token)
@@ -401,6 +401,7 @@ class ParseMachine(StateMachine):
             val = not inverse
             debug("Marking seen flag {!r} as {}".format(self.flag, val))
             self.flag.value = val
+        self.iterable_arg_active = False
 
     def see_value(self, value):
         self.check_ambiguity(value)
@@ -413,6 +414,10 @@ class ParseMachine(StateMachine):
 
     def see_positional_arg(self, value):
         for arg in self.context.positional_args:
+            if arg.iterable:
+                arg.value.append(value)
+                self.iterable_arg_active = True
+                break
             if arg.value is None:
                 arg.value = value
                 break

@@ -131,6 +131,11 @@ class Context_:
             self.c.positional_args[0].value = 17
             assert self.c.args["hrm"].value == self.c.positional_args[0].value
 
+        def stops_positional_args_after_iterable_positional_args(self):
+            self.c.add_arg(name="iter", positional=True, iterable=True)
+            with raises(ValueError):
+                self.c.add_arg(name="pos", positional=True)
+
     class deepcopy:
         "__deepcopy__"
 

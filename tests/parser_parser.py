@@ -254,6 +254,19 @@ class Parser_:
                 assert r.args["pos2"].value == "pos2val"
                 assert r.args["nonpos"].value == "wut"
 
+            def positional_args_can_be_iterable(self):
+                mytask = Context(
+                    "mytask",
+                    args=[
+                        Argument("pos", positional=True, iterable=True, kind=list),
+                        Argument("nonpos", default="default"),
+                    ],
+                )
+                result = Parser([mytask]).parse_argv(["mytask", "--nonpos", "value", "pos1", "pos2"])
+                r = result[0]
+                assert r.args["pos"].value == ["pos1", "pos2"]
+                assert r.args["nonpos"].value == "value"
+
         class equals_signs:
             def _compare(self, argname, invoke, value):
                 c = Context("mytask", args=(Argument(argname, kind=str),))

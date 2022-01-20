@@ -84,6 +84,7 @@ class ParserContext(object):
         """
         self.args = Lexicon()
         self.positional_args = []
+        self.iterable_arg_active = None
         self.flags = Lexicon()
         self.inverse_flags = {}  # No need for Lexicon here
         self.name = name
@@ -131,6 +132,9 @@ class ParserContext(object):
         self.args[main] = arg
         # Note positionals in distinct, ordered list attribute
         if arg.positional:
+            if self.positional_args and self.positional_args[-1].iterable:
+                msg = "Tried to add positional argument after an iterable positional argument"
+                raise ValueError(msg.format(name))
             self.positional_args.append(arg)
         # Add names & nicknames to flags, args
         self.flags[to_flag(main)] = arg
@@ -151,6 +155,10 @@ class ParserContext(object):
     @property
     def missing_positional_args(self):
         return [x for x in self.positional_args if x.value is None]
+
+    @property
+    def ready_positional_args(self):
+        return [x for x in self.positional_args if x.value is None or (x.iterable and self.iterable_arg_active is not False)]
 
     @property
     def as_kwargs(self):

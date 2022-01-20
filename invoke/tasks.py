@@ -179,6 +179,8 @@ class Task(object):
         opts = {}
         # Whether it's positional or not
         opts["positional"] = name in self.positional
+        # Whether it's iterable or not
+        opts["iterable"] = name in self.iterable
         # Whether it is a value-optional flag
         opts["optional"] = name in self.optional
         # Whether it should be of an iterable (list) kind

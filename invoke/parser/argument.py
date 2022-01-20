@@ -41,6 +41,7 @@ class Argument(object):
         default=None,
         help=None,
         positional=False,
+        iterable=False,
         optional=False,
         incrementable=False,
         attr_name=None,
@@ -63,6 +64,7 @@ class Argument(object):
         self.default = default
         self.help = help
         self.positional = positional
+        self.iterable = iterable
         self.optional = optional
         self.incrementable = incrementable
         self.attr_name = attr_name
